@@ -1,21 +1,31 @@
 /*
- * Copyright 2013 Google Inc.
- * Copyright 2014-2016 the libsecp256k1 contributors
+ * Copyright (C) by MinterTeam. 2018
+ * @link https://github.com/MinterTeam
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * The MIT License
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 package com.edwardstock.secp256k1;
+
+import android.util.Log;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -25,6 +35,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static com.edwardstock.secp256k1.NativeSecp256k1Util.AssertFailException;
 import static com.edwardstock.secp256k1.NativeSecp256k1Util.assertEquals;
+import static com.edwardstock.secp256k1.NativeSecp256k1Util.checkArgument;
 
 /**
  * <p>This class holds native methods to handle ECDSA verification.</p>
@@ -58,7 +69,7 @@ public final class NativeSecp256k1 {
             try {
                 System.loadLibrary(SONAME);
             } catch (UnsatisfiedLinkError e) {
-                //Timber.e(e, "UnsatisfiedLinkError");
+                Log.e(e.getClass().getSimpleName(), e.getMessage());
                 isEnabled = false;
             }
 
@@ -111,11 +122,11 @@ public final class NativeSecp256k1 {
     /**
      * libsecp256k1 Create an ECDSA signature.
      *
-     * @param data   Message hash, 32 bytes
+     * @param ctx    pointer context
+     * @param data   Message hash, 32 bytes byte array of signature
      * @param secret Secret key, 32 bytes
      *               <p>
      *               Return values
-     * @param sig    byte array of signature
      */
     public static byte[] sign(long ctx, byte[] data, byte[] secret) throws AssertFailException {
         checkArgument(data.length == 32 && secret.length <= 32);
@@ -217,7 +228,8 @@ public final class NativeSecp256k1 {
      * @param seckey ECDSA Secret key, 32 bytes
      *               <p>
      *               Return values
-     * @param pubkey ECDSA Public key, 33 or 65 bytes
+     * @param compressed Compressed or not public key
+     * @return ECDSA Public key, 33 or 65 bytes
      */
     //TODO add a 'compressed' arg
     public static byte[] computePubkey(long ctx, byte[] seckey, boolean compressed) {
@@ -275,8 +287,8 @@ public final class NativeSecp256k1 {
     /**
      * libsecp256k1 PrivKey Tweak-Mul - Tweak privkey by multiplying to it
      *
+     * @param privkey 32-byte seckey
      * @param tweak  some bytes to tweak with
-     * @param seckey 32-byte seckey
      */
     public static byte[] privKeyTweakMul(long ctx, byte[] privkey, byte[] tweak) throws AssertFailException {
         checkArgument(privkey.length == 32);
@@ -314,8 +326,8 @@ public final class NativeSecp256k1 {
     /**
      * libsecp256k1 PrivKey Tweak-Add - Tweak privkey by adding to it
      *
+     * @param privkey 32-byte seckey
      * @param tweak  some bytes to tweak with
-     * @param seckey 32-byte seckey
      */
     public static byte[] privKeyTweakAdd(long ctx, byte[] privkey, byte[] tweak) throws AssertFailException {
         checkArgument(privkey.length == 32);
