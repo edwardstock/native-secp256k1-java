@@ -1,3 +1,0 @@
-[submodule "libs/uint128_t"]
-	path = libs/uint128_t
-	url = https://github.com/calccrypto/uint128_t.git
