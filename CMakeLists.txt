@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 include(CheckTypeSize)
 include_directories(src)
+include_directories(libs)
 
 check_type_size("unsigned __int128" HAVE_BIGNUM LANGUAGE CXX)
 
