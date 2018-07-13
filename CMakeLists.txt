@@ -1,5 +1,5 @@
 #
-# MinterCore. 2018
+# Eduard Maximovich. 2018
 #
 # @author Eduard Maximovich <edward.vstock@gmail.com>
 # native library secp256k1 and jni bindings
@@ -9,8 +9,8 @@ cmake_minimum_required(VERSION 3.4)
 project(secp256k1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 
-include(AndroidDetermine.cmake)
 include(CheckTypeSize)
+include_directories(src)
 
 check_type_size("unsigned __int128" HAVE_BIGNUM LANGUAGE CXX)
 
@@ -26,11 +26,6 @@ else ()
 	endif ()
 	set(COMPILE_OPTIONS -O3 -W -Wno-narrowing -Wall -Wextra -Wcast-align -Wnested-externs -Wshadow -Wstrict-prototypes -Wno-unused-function -Wno-long-long -Wno-overlength-strings -fvisibility=hidden)
 endif ()
-
-#add_executable(gen_context src/gen_context.c)
-#target_include_directories(gen_context PRIVATE ${CMAKE_SOURCE_DIR})
-
-#add_custom_target(ecmult_static_context gen_context WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 set(all_sources
     src/basic-config.h
@@ -79,7 +74,7 @@ set(all_sources
     src/ecmult_static_context.h
     )
 
-set(bignum_cxx uint128_t/uint128_t.h uint128_t/uint128_t.cpp)
+set(bignum_cxx libs/uint128_t/uint128_t.h libs/uint128_t/uint128_t.cpp)
 set(main_c_sources ${all_sources})
 set(secp256k1_jni_sources src/java/NativeSecp256k1.cpp src/java/NativeSecp256k1.cpp)
 
@@ -122,10 +117,12 @@ target_include_directories(secp256k1_core PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SO
 target_compile_options(secp256k1_core PRIVATE ${COMPILE_OPTIONS})
 
 
-# JNI
-add_library(secp256k1_jni SHARED ${secp256k1_jni_sources})
-target_link_libraries(secp256k1_jni secp256k1_core)
-target_include_directories(secp256k1_jni PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
+if (ANDROID_PLATFORM)
+	# JNI
+	add_library(secp256k1_jni SHARED ${secp256k1_jni_sources})
+	target_link_libraries(secp256k1_jni secp256k1_core)
+	target_include_directories(secp256k1_jni PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
+endif ()
 
 if (ENABLE_GENERATE_CONTEXT)
 	add_dependencies(secp256k1_core ecmult_static_context)
