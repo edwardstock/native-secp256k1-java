@@ -69,7 +69,7 @@ public final class NativeSecp256k1 {
             try {
                 System.loadLibrary(SONAME);
             } catch (UnsatisfiedLinkError e) {
-                Log.e(e.getClass().getSimpleName(), e.getMessage());
+                System.err.println(String.format("Unable to load %s in %s: %s", SONAME, System.getProperty("java.library.path"), e.getMessage()));
                 isEnabled = false;
             }
 
