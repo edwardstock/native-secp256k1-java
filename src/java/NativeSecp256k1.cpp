@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include <include/secp256k1_recovery.h>
+#include "include/secp256k1_recovery.h"
 #include "NativeSecp256k1.h"
 #include "include/secp256k1.h"
 #include "include/secp256k1_ecdh.h"
