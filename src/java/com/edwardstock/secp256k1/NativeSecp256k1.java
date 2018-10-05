@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -24,8 +25,6 @@
  */
 
 package com.edwardstock.secp256k1;
-
-import android.util.Log;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -92,10 +91,9 @@ public final class NativeSecp256k1 {
     /**
      * Verifies the given secp256k1 signature in native code.
      * Calling when enabled == false is undefined (probably library not loaded)
-     *
-     * @param data      The data which was signed, must be exactly 32 bytes
+     * @param data The data which was signed, must be exactly 32 bytes
      * @param signature The signature
-     * @param pub       The public key which did the signing
+     * @param pub The public key which did the signing
      */
     public static boolean verify(long ctx, byte[] data, byte[] signature, byte[] pub) throws AssertFailException {
         checkArgument(data.length == 32 && signature.length <= 520 && pub.length <= 520);
@@ -121,12 +119,11 @@ public final class NativeSecp256k1 {
 
     /**
      * libsecp256k1 Create an ECDSA signature.
-     *
-     * @param ctx    pointer context
-     * @param data   Message hash, 32 bytes byte array of signature
+     * @param ctx pointer context
+     * @param data Message hash, 32 bytes byte array of signature
      * @param secret Secret key, 32 bytes
-     *               <p>
-     *               Return values
+     *         <p>
+     *         Return values
      */
     public static byte[] sign(long ctx, byte[] data, byte[] secret) throws AssertFailException {
         checkArgument(data.length == 32 && secret.length <= 32);
@@ -161,11 +158,10 @@ public final class NativeSecp256k1 {
 
     /**
      * libsecp256k1 Create an ECDSA recoverable signature.
-     *
-     * @param data   Message hash, 32 bytes
+     * @param data Message hash, 32 bytes
      * @param secret Secret key, 64 bytes
-     *               <p>
-     *               Return values
+     *         <p>
+     *         Return values
      * @return Split byte array signature
      */
     public static RecoverableSignature signRecoverableSerialized(long ctx, byte[] data, byte[] secret) {
@@ -199,7 +195,6 @@ public final class NativeSecp256k1 {
 
     /**
      * libsecp256k1 Seckey Verify - returns 1 if valid, 0 if invalid
-     *
      * @param secretKey ECDSA Secret key, 32 bytes
      */
     public static boolean secKeyVerify(long ctx, byte[] secretKey) {
@@ -224,10 +219,9 @@ public final class NativeSecp256k1 {
 
     /**
      * libsecp256k1 Compute Pubkey - computes public key from secret key
-     *
      * @param seckey ECDSA Secret key, 32 bytes
-     *               <p>
-     *               Return values
+     *         <p>
+     *         Return values
      * @param compressed Compressed or not public key
      * @return ECDSA Public key, 33 or 65 bytes
      */
@@ -286,9 +280,8 @@ public final class NativeSecp256k1 {
 
     /**
      * libsecp256k1 PrivKey Tweak-Mul - Tweak privkey by multiplying to it
-     *
      * @param privkey 32-byte seckey
-     * @param tweak  some bytes to tweak with
+     * @param tweak some bytes to tweak with
      */
     public static byte[] privKeyTweakMul(long ctx, byte[] privkey, byte[] tweak) throws AssertFailException {
         checkArgument(privkey.length == 32);
@@ -325,9 +318,8 @@ public final class NativeSecp256k1 {
 
     /**
      * libsecp256k1 PrivKey Tweak-Add - Tweak privkey by adding to it
-     *
      * @param privkey 32-byte seckey
-     * @param tweak  some bytes to tweak with
+     * @param tweak some bytes to tweak with
      */
     public static byte[] privKeyTweakAdd(long ctx, byte[] privkey, byte[] tweak) throws AssertFailException {
         checkArgument(privkey.length == 32);
@@ -364,8 +356,7 @@ public final class NativeSecp256k1 {
 
     /**
      * libsecp256k1 PubKey Tweak-Add - Tweak pubkey by adding to it
-     *
-     * @param tweak  some bytes to tweak with
+     * @param tweak some bytes to tweak with
      * @param pubkey 32-byte seckey
      */
     public static byte[] pubKeyTweakAdd(long ctx, byte[] pubkey, byte[] tweak) throws AssertFailException {
@@ -403,8 +394,7 @@ public final class NativeSecp256k1 {
 
     /**
      * libsecp256k1 PubKey Tweak-Mul - Tweak pubkey by multiplying to it
-     *
-     * @param tweak  some bytes to tweak with
+     * @param tweak some bytes to tweak with
      * @param pubkey 32-byte seckey
      */
     public static byte[] pubKeyTweakMul(long ctx, byte[] pubkey, byte[] tweak) throws AssertFailException {
@@ -442,7 +432,6 @@ public final class NativeSecp256k1 {
 
     /**
      * libsecp256k1 create ECDH secret - constant time ECDH calculation
-     *
      * @param seckey byte array of secret key used in exponentiaion
      * @param pubkey byte array of public key used in exponentiaion
      */
@@ -478,7 +467,6 @@ public final class NativeSecp256k1 {
 
     /**
      * libsecp256k1 randomize - updates the context randomization
-     *
      * @param seed 32-byte random seed
      */
     public static synchronized boolean randomize(long ctx, byte[] seed) throws AssertFailException {

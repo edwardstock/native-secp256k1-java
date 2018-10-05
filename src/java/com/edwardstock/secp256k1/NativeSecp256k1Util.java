@@ -1,6 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -25,7 +26,7 @@
 
 package com.edwardstock.secp256k1;
 
-import android.support.annotation.Nullable;
+import javax.annotation.Nullable;
 
 public final class NativeSecp256k1Util {
 
@@ -48,15 +49,8 @@ public final class NativeSecp256k1Util {
             System.out.println("PASS: " + message);
     }
 
-    public static class AssertFailException extends RuntimeException {
-        public AssertFailException(String message) {
-            super(message);
-        }
-    }
-
     /**
      * Ensures the truth of an expression involving one or more parameters to the calling method.
-     *
      * @param expression a boolean expression
      * @throws IllegalArgumentException if {@code expression} is false
      */
@@ -68,15 +62,20 @@ public final class NativeSecp256k1Util {
 
     /**
      * Ensures the truth of an expression involving one or more parameters to the calling method.
-     *
-     * @param expression   a boolean expression
+     * @param expression a boolean expression
      * @param errorMessage the exception message to use if the check fails; will be converted to a
-     *                     string using {@link String#valueOf(Object)}
+     *         string using {@link String#valueOf(Object)}
      * @throws IllegalArgumentException if {@code expression} is false
      */
     public static void checkArgument(boolean expression, @Nullable Object errorMessage) {
         if (!expression) {
             throw new IllegalArgumentException(String.valueOf(errorMessage));
+        }
+    }
+
+    public static class AssertFailException extends RuntimeException {
+        public AssertFailException(String message) {
+            super(message);
         }
     }
 }

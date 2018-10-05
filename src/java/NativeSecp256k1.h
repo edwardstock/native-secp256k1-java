@@ -78,7 +78,7 @@ JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1pubkey_1tweak_
  */
 JNIEXPORT void JNICALL
 Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1destroy_1context
-(JNIEnv * , jclass , jlong ) ;
+    (JNIEnv *, jclass, jlong);
 
 /*
  * Class:     com_edwardstock_secp256k1NativeSecp256k1
@@ -87,7 +87,7 @@ Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1destroy_1context
  */
 JNIEXPORT jint
 JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ecdsa_1verify
-    (JNIEnv * , jclass, jobject, jlong, jint, jint);
+    (JNIEnv *, jclass, jobject, jlong, jint, jint);
 
 /*
  * Class:     com_edwardstock_secp256k1NativeSecp256k1
@@ -96,11 +96,11 @@ JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ecdsa_1verify
  */
 JNIEXPORT jobjectArray
 JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ecdsa_1sign
-    (JNIEnv * , jclass, jobject, jlong);
+    (JNIEnv *, jclass, jobject, jlong);
 
 JNIEXPORT jobjectArray
 JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ecdsa_1sign_1recoverable_1serialized
-    (JNIEnv * , jclass, jobject, jlong);
+    (JNIEnv *, jclass, jobject, jlong);
 
 /*
  * Class:     com_edwardstock_secp256k1NativeSecp256k1
@@ -109,7 +109,7 @@ JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ecdsa_1sign_1r
  */
 JNIEXPORT jint
 JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ec_1seckey_1verify
-    (JNIEnv * , jclass, jobject, jlong);
+    (JNIEnv *, jclass, jobject, jlong);
 
 /*
  * Class:     com_edwardstock_secp256k1NativeSecp256k1
@@ -118,7 +118,7 @@ JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ec_1seckey_1ve
  */
 JNIEXPORT jobjectArray
 JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ec_1pubkey_1create
-    (JNIEnv * , jclass, jobject, jlong, jboolean);
+    (JNIEnv *, jclass, jobject, jlong, jboolean);
 
 /*
  * Class:     com_edwardstock_secp256k1NativeSecp256k1
@@ -127,7 +127,7 @@ JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ec_1pubkey_1cr
  */
 JNIEXPORT jobjectArray
 JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ec_1pubkey_1parse
-    (JNIEnv * , jclass, jobject, jlong, jint);
+    (JNIEnv *, jclass, jobject, jlong, jint);
 
 /*
  * Class:     com_edwardstock_secp256k1NativeSecp256k1
@@ -136,9 +136,7 @@ JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ec_1pubkey_1pa
  */
 JNIEXPORT jobjectArray
 JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ecdh
-    (JNIEnv * env, jclass
-classObject , jobject byteBufferObject, jlong
-ctx_l , jint publen ) ;
+    (JNIEnv *env, jclass classObject, jobject byteBufferObject, jlong ctx_l, jint publen);
 
 #ifdef __cplusplus
 }
