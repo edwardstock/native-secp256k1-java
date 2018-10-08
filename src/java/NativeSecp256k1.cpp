@@ -131,12 +131,11 @@ jobjectArray Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ecdsa_1si
     int recoveryId = 0;
 
     if (ret) {
-        // todo
-//        int serializeRet = secp256k1_ecdsa_recoverable_signature_serialize_compact(
-//            ctx,
-//            outputSer,
-//            &recoveryId,
-//            &sig);
+        int serializeRet = secp256k1_ecdsa_recoverable_signature_serialize_compact(
+            ctx,
+            outputSer,
+            &recoveryId,
+            &sig);
         outputSer[64] = ((uint8_t) recoveryId) + (uint8_t) 27;
     } else {
         return NULL;
@@ -202,6 +201,10 @@ JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ec_1pubkey_1cr
 
     unsigned int compFlag =
         compressed == ((uint8_t) 1) ? SECP256K1_EC_COMPRESSED : SECP256K1_EC_UNCOMPRESSED;
+
+    if (ret) {
+        int ret2 = secp256k1_ec_pubkey_serialize(ctx, outputSer, &outputLen, &pubkey, compFlag);
+    }
 
     intsarray[0] = outputLen;
     intsarray[1] = ret;
@@ -302,6 +305,11 @@ JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1pubkey_1tweak_
         ret = secp256k1_ec_pubkey_tweak_add(ctx, &pubkey, tweak);
     }
 
+    if (ret) {
+        int ret2 = secp256k1_ec_pubkey_serialize(ctx, outputSer, &outputLen, &pubkey, SECP256K1_EC_UNCOMPRESSED);
+        (void)ret2;
+    }
+
     intsarray[0] = (uint8_t) outputLen;
     intsarray[1] = (uint8_t) ret;
 
@@ -336,6 +344,11 @@ JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1pubkey_1tweak_
 
     if (ret) {
         ret = secp256k1_ec_pubkey_tweak_mul(ctx, &pubkey, tweak);
+    }
+
+    if (ret) {
+        int ret2 = secp256k1_ec_pubkey_serialize(ctx, outputSer, &outputLen, &pubkey, SECP256K1_EC_UNCOMPRESSED);
+        (void)ret2;
     }
 
     intsarray[0] = outputLen;
