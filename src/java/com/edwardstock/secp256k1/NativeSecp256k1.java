@@ -37,18 +37,11 @@ import static com.edwardstock.secp256k1.NativeSecp256k1Util.assertEquals;
 import static com.edwardstock.secp256k1.NativeSecp256k1Util.checkArgument;
 
 /**
- * <p>This class holds native methods to handle ECDSA verification.</p>
- *
- * <p>You can find an example library that can be used for this at https://github.com/bitcoin/secp256k1</p>
- *
- * <p>To build secp256k1 for use with bitcoinj, run
- * `./configure --enable-jni --enable-experimental --enable-module-ecdh`
- * and `make` then copy `.libs/libsecp256k1.so` to your system library path
- * or point the JVM to the folder containing it with -Djava.library.path
- * </p>
+ * This class holds native methods to handle ECDSA verification.
  */
 public final class NativeSecp256k1 {
-    private final static String SONAME = "secp256k1_jni";
+    public final static String SONAME = "secp256k1_jni";
+    public final static String[] LIB_FILES = new String[]{"libsecp256k1_jni.so"};
 
     private static final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
     private static final Lock r = rwl.readLock();
@@ -56,33 +49,45 @@ public final class NativeSecp256k1 {
     private static ThreadLocal<ByteBuffer> nativeECDSABuffer = new ThreadLocal<>();
 
     private static NativeSecp256k1 INSTANCE;
-    private final boolean enabled; //true if the library is loaded
+    private static Throwable sError = null;
+    private static boolean sEnabled = true; //true if the library is loaded
 
-    private NativeSecp256k1(boolean en) {
-        enabled = en;
+    private NativeSecp256k1() {
     }
 
     public static void init() {
         if (INSTANCE == null) {
-            boolean isEnabled = true;
             try {
                 System.loadLibrary(SONAME);
             } catch (UnsatisfiedLinkError e) {
                 System.err.println(String.format("Unable to load %s in %s: %s", SONAME, System.getProperty("java.library.path"), e.getMessage()));
-                isEnabled = false;
+                sError = e;
+                setEnabled(false);
             }
 
-            INSTANCE = new NativeSecp256k1(isEnabled);
+            INSTANCE = new NativeSecp256k1();
         }
     }
 
+    public static Throwable getError() {
+        return sError;
+    }
+
     public static boolean isEnabled() {
-        return INSTANCE.enabled;
+        return sEnabled;
+    }
+
+    /**
+     * Use this carefully, only if you have loaded native libs by yourself
+     * @param enabled
+     */
+    public static void setEnabled(boolean enabled) {
+        sEnabled = enabled;
     }
 
     public static long contextCreate() {
         if (!isEnabled()) {
-            return -1;
+            return 0;//nullptr
         }
 
         return secp256k1_init_context();
@@ -90,7 +95,7 @@ public final class NativeSecp256k1 {
 
     /**
      * Verifies the given secp256k1 signature in native code.
-     * Calling when enabled == false is undefined (probably library not loaded)
+     * Calling when sEnabled == false is undefined (probably library not loaded)
      * @param data The data which was signed, must be exactly 32 bytes
      * @param signature The signature
      * @param pub The public key which did the signing
