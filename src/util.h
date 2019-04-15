@@ -110,8 +110,8 @@ static SECP256K1_INLINE void *checked_realloc(const secp256k1_callback *cb, void
 #endif
 
 #ifdef _WIN32
-# define I64FORMAT "I64d"
-# define I64uFORMAT "I64u"
+# define I64FORMAT "lld"
+# define I64uFORMAT "llu"
 #else
 # define I64FORMAT "lld"
 # define I64uFORMAT "llu"

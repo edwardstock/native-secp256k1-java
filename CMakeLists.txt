@@ -25,7 +25,7 @@ else ()
 	if (HAVE_BIGNUM)
 		add_definitions(-DHAVE___INT128)
 	endif ()
-	set(COMPILE_OPTIONS -O3 -W -Wno-narrowing -Wall -Wextra -Wcast-align -Wnested-externs -Wshadow -Wstrict-prototypes -Wno-unused-function -Wno-long-long -Wno-overlength-strings -fvisibility=hidden)
+	set(COMPILE_OPTIONS -O3 -W -Wno-narrowing -Wall -Wextra -Wcast-align -Wnested-externs -Wshadow -Wstrict-prototypes -Wno-unused-function -Wno-long-long -Wno-overlength-strings -fPIC -fvisibility=hidden)
 endif ()
 
 set(all_sources
