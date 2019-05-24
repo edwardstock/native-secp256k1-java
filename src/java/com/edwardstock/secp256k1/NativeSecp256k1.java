@@ -534,6 +534,22 @@ public final class NativeSecp256k1 {
             s = is;
             v = iv;
         }
+
+        public byte[] toSign() {
+            int n = 0;
+            byte[] out = new byte[65];
+            for (int i = 0; i < r.length; n++, i++) {
+                out[n] = r[i];
+            }
+            for (int i = 0; i < s.length; n++, i++) {
+                out[n] = s[i];
+            }
+            for (int i = 0; i < v.length; n++, i++) {
+                out[n] = v[i];
+            }
+
+            return out;
+        }
     }
 
 }
