@@ -124,23 +124,26 @@ target_compile_definitions(secp256k1_core PRIVATE ${COMMON_COMPILE_FLAGS} ${COMP
 target_include_directories(secp256k1_core PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
 target_compile_options(secp256k1_core PRIVATE ${COMPILE_OPTIONS})
 
+if (NOT DISABLE_JNI)
 
-if (ANDROID_PLATFORM)
-	# JNI
-	add_library(secp256k1_jni SHARED ${secp256k1_jni_sources})
-	target_link_libraries(secp256k1_jni secp256k1_core)
-	target_include_directories(secp256k1_jni PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
-else ()
-	find_package(JNI)
-	if (JNI_FOUND)
-		message(STATUS "JNI libs: ${JNI_LIBRARIES}")
+	if (ANDROID_PLATFORM)
+		# JNI
 		add_library(secp256k1_jni SHARED ${secp256k1_jni_sources})
 		target_link_libraries(secp256k1_jni secp256k1_core)
-		target_link_libraries(secp256k1_jni ${JAVA_JVM_LIBRARY})
-		target_include_directories(secp256k1_jni PRIVATE ${JNI_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
+		target_include_directories(secp256k1_jni PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
 	else ()
-		message(WARN "JNI not found")
+		find_package(JNI)
+		if (JNI_FOUND)
+			message(STATUS "JNI libs: ${JNI_LIBRARIES}")
+			add_library(secp256k1_jni SHARED ${secp256k1_jni_sources})
+			target_link_libraries(secp256k1_jni secp256k1_core)
+			target_link_libraries(secp256k1_jni ${JAVA_JVM_LIBRARY})
+			target_include_directories(secp256k1_jni PRIVATE ${JNI_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
+		else ()
+			message(WARN "JNI not found")
+		endif ()
 	endif ()
+
 endif ()
 
 if (ENABLE_GENERATE_CONTEXT)
