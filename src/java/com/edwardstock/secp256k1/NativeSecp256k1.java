@@ -191,6 +191,10 @@ public final class NativeSecp256k1 {
             r.unlock();
         }
 
+        if(retByteArray == null) {
+            return null;
+        }
+
         if (retByteArray.length != 3) {
             return null;
         }
