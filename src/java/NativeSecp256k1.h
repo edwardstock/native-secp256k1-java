@@ -1,5 +1,5 @@
 #include <jni.h>
-#include "include/secp256k1.h"
+#include "secp256k1.h"
 /* Header for class com.edwardstock.secp256k1.NativeSecp256k1 */
 
 #ifndef _Included_com_edwardstock_secp256k1NativeSecp256k1

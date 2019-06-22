@@ -11,7 +11,7 @@
 extern "C" {
 #endif
 
-#include "include/secp256k1_ecdh.h"
+#include "secp256k1_ecdh.h"
 #include "ecmult_const_impl.h"
 
 int secp256k1_ecdh(const secp256k1_context *ctx,

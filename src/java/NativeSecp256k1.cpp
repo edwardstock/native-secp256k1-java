@@ -1,10 +1,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include "include/secp256k1_recovery.h"
+#include "secp256k1_recovery.h"
 #include "NativeSecp256k1.h"
-#include "include/secp256k1.h"
-#include "include/secp256k1_ecdh.h"
+#include "secp256k1.h"
+#include "secp256k1_ecdh.h"
 
 JNIEXPORT jlong
 JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1init_1context(

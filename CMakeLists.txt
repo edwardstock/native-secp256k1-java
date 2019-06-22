@@ -27,10 +27,20 @@ else ()
 	if (HAVE_BIGNUM)
 		add_definitions(-DHAVE___INT128)
 	endif ()
-	set(COMPILE_OPTIONS -O3 -W -Wno-narrowing -Wall -Wextra -Wcast-align -Wnested-externs -Wshadow -Wstrict-prototypes -Wno-unused-function -Wno-long-long -Wno-overlength-strings -fPIC -fvisibility=hidden)
+	set(COMPILE_OPTIONS -O3 -W -Wno-narrowing -Wall -Wextra -Wcast-align  -Wshadow -Wno-unused-function -Wno-long-long -Wno-overlength-strings -fPIC -fvisibility=hidden)
+	if (APPLE)
+		set(COMPILE_OPTIONS "${COMPILE_OPTIONS} -Wnested-externs -Wstrict-prototypes ")
+	endif (APPLE)
 endif ()
 
+set(HEADERS
+    include/secp256k1.h
+    include/secp256k1_ecdh.h
+    include/secp256k1_recovery.h
+    )
+
 set(all_sources
+    ${HEADERS}
     src/basic-config.h
     src/ecdsa.h
     src/ecdsa_impl.h
@@ -70,9 +80,6 @@ set(all_sources
     src/modules/ecdh/main_impl.h
     src/modules/recovery/main_impl.h
     src/secp256k1.cpp
-    include/secp256k1.h
-    include/secp256k1_ecdh.h
-    include/secp256k1_recovery.h
     src/util.h
     src/ecmult_static_context.h
     )
@@ -121,7 +128,7 @@ else ()
 endif ()
 
 target_compile_definitions(secp256k1_core PRIVATE ${COMMON_COMPILE_FLAGS} ${COMPILE_FLAGS})
-target_include_directories(secp256k1_core PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(secp256k1_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_options(secp256k1_core PRIVATE ${COMPILE_OPTIONS})
 
 if (NOT DISABLE_JNI)

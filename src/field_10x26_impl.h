@@ -7,7 +7,7 @@
 #ifndef SECP256K1_FIELD_REPR_IMPL_H
 #define SECP256K1_FIELD_REPR_IMPL_H
 
-#include <include/secp256k1.h>
+#include "secp256k1.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
