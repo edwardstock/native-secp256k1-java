@@ -50,10 +50,29 @@ Implementation details
 Build steps
 -----------
 
-libsecp256k1 is built using autotools:
+libsecp256k1 is built using cmake:
 
-    $ ./autogen.sh
-    $ ./configure
-    $ make
-    $ ./tests
-    $ sudo make install  # optional
+```bash
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Debug
+make -j4 
+```
+
+Available build-time options:
+ - `BUILD_SECP256K1_STATIC` - build core library as static archive (default: YES)
+ - `DISABLE_JNI` - don't build JNI binding, only core library (default: NO)
+ 
+**Attention! To build JNI library, the global variable `JAVA_HOME` MUST be set in your system or set it in line before configuring the project**:
+```bash
+JAVA_HOME=/path/to/java_sdk cmake .. -DCMAKE_BUILD_TYPE=Debug
+```
+
+
+Result files
+------------------
+With JNI:
+ - libsecp256k1_core[ .a | .lib ]
+ - libsecp256k1_jni[ .dylib | so | dll ] (always shared library)
+ 
+Without JNI:
+ - libsecp256k1_core[ .a | .lib ]

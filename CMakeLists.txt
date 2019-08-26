@@ -29,7 +29,7 @@ else ()
 	endif ()
 	set(COMPILE_OPTIONS -O3 -W -Wno-narrowing -Wall -Wextra -Wcast-align  -Wshadow -Wno-unused-function -Wno-long-long -Wno-overlength-strings -fPIC -fvisibility=hidden)
 	if (APPLE)
-		set(COMPILE_OPTIONS "${COMPILE_OPTIONS} -Wnested-externs -Wstrict-prototypes ")
+		set(COMPILE_OPTIONS ${COMPILE_OPTIONS} -Wnested-externs -Wstrict-prototypes)
 	endif (APPLE)
 endif ()
 
