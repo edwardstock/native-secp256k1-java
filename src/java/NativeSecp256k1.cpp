@@ -95,8 +95,8 @@ JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ecdsa_1sign(
         secp256k1_ecdsa_signature_serialize_der(ctx, outputSer, &outputLen, sig);
     }
 
-    intsarray[0] = outputLen;
-    intsarray[1] = ret;
+    intsarray[0] = (uint8_t)outputLen;
+    intsarray[1] = (uint8_t)ret;
 
     retArray = (env)->NewObjectArray(2, (env)->FindClass("[B"), (env)->NewByteArray(1));
 
@@ -111,7 +111,8 @@ JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ecdsa_1sign(
     return retArray;
 }
 
-jobjectArray Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ecdsa_1sign_1recoverable_1serialized(
+JNIEXPORT
+jobjectArray JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ecdsa_1sign_1recoverable_1serialized(
     JNIEnv *env, jclass, jobject byteBufferObject, jlong ctx_l) {
     secp256k1_context *ctx = (secp256k1_context *) (uintptr_t) ctx_l;
 
@@ -206,8 +207,8 @@ JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ec_1pubkey_1cr
         int ret2 = secp256k1_ec_pubkey_serialize(ctx, outputSer, &outputLen, &pubkey, compFlag);
     }
 
-    intsarray[0] = outputLen;
-    intsarray[1] = ret;
+    intsarray[0] = (uint8_t)outputLen;
+    intsarray[1] = (uint8_t)ret;
 
     retArray = (env)->NewObjectArray(2, (env)->FindClass("[B"), (env)->NewByteArray(1));
 
@@ -351,8 +352,8 @@ JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1pubkey_1tweak_
         (void)ret2;
     }
 
-    intsarray[0] = outputLen;
-    intsarray[1] = ret;
+    intsarray[0] = (uint8_t)outputLen;
+    intsarray[1] = (uint8_t)ret;
 
     retArray = (env)->NewObjectArray(2, (env)->FindClass("[B"), (env)->NewByteArray(1));
 
