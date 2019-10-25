@@ -127,7 +127,7 @@ SECP256K1_GNUC_EXT typedef unsigned __int128 uint128_t;
 #endif
 
 #ifdef __cplusplus
-};
+}
 #endif
 
 #endif /* SECP256K1_UTIL_H */

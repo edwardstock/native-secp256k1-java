@@ -137,6 +137,7 @@ jobjectArray JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1e
             outputSer,
             &recoveryId,
             &sig);
+        (void)serializeRet;
         outputSer[64] = ((uint8_t) recoveryId) + (uint8_t) 27;
     } else {
         return NULL;
@@ -205,6 +206,7 @@ JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ec_1pubkey_1cr
 
     if (ret) {
         int ret2 = secp256k1_ec_pubkey_serialize(ctx, outputSer, &outputLen, &pubkey, compFlag);
+        (void)ret2;
     }
 
     intsarray[0] = (uint8_t)outputLen;
@@ -370,7 +372,7 @@ JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1pubkey_1tweak_
 
 JNIEXPORT jlong
 JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ecdsa_1pubkey_1combine(
-    JNIEnv *env, jclass classObject, jobject byteBufferObject, jlong ctx_l, jint numkeys) {
+    JNIEnv *, jclass, jobject, jlong, jint) {
     // dummy
 
     return 0;
@@ -379,7 +381,7 @@ JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ecdsa_1pubkey_
 JNIEXPORT jobjectArray
 JNICALL Java_com_edwardstock_secp256k1_NativeSecp256k1_secp256k1_1ecdh(
     JNIEnv *env, jclass, jobject byteBufferObject, jlong ctx_l, jint publen) {
-    secp256k1_context *ctx = (secp256k1_context *) (uintptr_t) ctx_l;
+    auto *ctx = (secp256k1_context *) (uintptr_t) ctx_l;
     const uint8_t
         *secdata = static_cast<uint8_t *>((env)->GetDirectBufferAddress(byteBufferObject));
     const uint8_t *pubdata = secdata + 32;

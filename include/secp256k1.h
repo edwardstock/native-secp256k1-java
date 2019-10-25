@@ -8,6 +8,7 @@ extern "C" {
 #endif
 
 #include <stddef.h>
+#include "secp256k1_config.h"
 
 /* These rules specify the order of arguments in API calls:
  *
@@ -127,20 +128,6 @@ typedef int (*secp256k1_nonce_function)(
 # else
 #  define SECP256K1_INLINE inline
 # endif
-
-#ifndef SECP256K1_API
-# if defined(_WIN32)
-#  ifdef SECP256K1_BUILD
-#   define SECP256K1_API __declspec(dllexport)
-#  else
-#   define SECP256K1_API
-#  endif
-# elif defined(__GNUC__) && defined(SECP256K1_BUILD)
-#  define SECP256K1_API __attribute__ ((visibility ("default")))
-# else
-#  define SECP256K1_API
-# endif
-#endif
 
 /**Warning attributes
   * NONNULL is not used if SECP256K1_BUILD is set to avoid the compiler optimizing out

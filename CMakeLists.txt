@@ -19,10 +19,29 @@ check_type_size("unsigned __int128" HAVE_BIGNUM LANGUAGE CXX)
 
 set(COMMON_COMPILE_FLAGS ENABLE_MODULE_RECOVERY ENABLE_MODULE_ECDH USE_ECMULT_STATIC_PRECOMPUTATION USE_FIELD_INV_BUILTIN USE_NUM_NONE USE_SCALAR_INV_BUILTIN)
 if (MSVC)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W2 /MP")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /DEBUG /Od")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2")
+	string(REGEX REPLACE "\\/W3" " " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+
 	set(COMPILE_FLAGS USE_FIELD_10X26 USE_SCALAR_8X32)
-	set(COMPILE_OPTIONS /W2)
+	add_compile_options(/wd4267)
+	add_compile_options(/wd4319)
+
+	if (BUILD_SECP256K1_STATIC)
+		foreach (flag_var
+		         CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+		         CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+			if (${flag_var} MATCHES "/MD")
+				string(REGEX REPLACE "MD" "MT" ${flag_var} "${${flag_var}}")
+			endif (${flag_var} MATCHES "/MD")
+		endforeach (flag_var)
+	endif ()
 else ()
 	#  -DUSE_ECMULT_STATIC_PRECOMPUTATION -DUSE_FIELD_5X52 -DUSE_SCALAR_4X64
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -pedantic -g")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 	add_definitions(-DHAVE_BUILTIN_EXPECT -DUSE_FIELD_10X26 -DUSE_SCALAR_8X32)
 	if (HAVE_BIGNUM)
 		add_definitions(-DHAVE___INT128)
@@ -34,6 +53,7 @@ else ()
 endif ()
 
 set(HEADERS
+    include/secp256k1_config.h
     include/secp256k1.h
     include/secp256k1_ecdh.h
     include/secp256k1_recovery.h
@@ -120,6 +140,15 @@ if (NOT HAVE_BIGNUM)
 	    ${bignum_cxx}
 	    )
 endif ()
+
+set(SECP256K1_EXPORING 1)
+if(NOT BUILD_SECP256K1_STATIC)
+	set(SECP256K1_SHARED 1)
+endif()
+configure_file(
+	${CMAKE_CURRENT_SOURCE_DIR}/cfg/secp256k1_config.h.in
+	${CMAKE_CURRENT_SOURCE_DIR}/include/secp256k1_config.h
+)
 
 if (BUILD_SECP256K1_STATIC)
 	add_library(secp256k1_core STATIC ${main_c_sources})
