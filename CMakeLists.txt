@@ -27,16 +27,6 @@ if (MSVC)
 	set(COMPILE_FLAGS USE_FIELD_10X26 USE_SCALAR_8X32)
 	add_compile_options(/wd4267)
 	add_compile_options(/wd4319)
-
-	if (BUILD_SECP256K1_STATIC)
-		foreach (flag_var
-		         CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
-		         CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
-			if (${flag_var} MATCHES "/MD")
-				string(REGEX REPLACE "MD" "MT" ${flag_var} "${${flag_var}}")
-			endif (${flag_var} MATCHES "/MD")
-		endforeach (flag_var)
-	endif ()
 else ()
 	#  -DUSE_ECMULT_STATIC_PRECOMPUTATION -DUSE_FIELD_5X52 -DUSE_SCALAR_4X64
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
