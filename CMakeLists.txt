@@ -15,6 +15,11 @@ include_directories(libs)
 
 set(BUILD_SECP256K1_STATIC ON CACHE BOOL "Build static library")
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY lib)
+set(CMAKE_PDB_OUTPUT_DIRECTORY lib)
+
 check_type_size("unsigned __int128" HAVE_BIGNUM LANGUAGE CXX)
 
 set(COMMON_COMPILE_FLAGS ENABLE_MODULE_RECOVERY ENABLE_MODULE_ECDH USE_ECMULT_STATIC_PRECOMPUTATION USE_FIELD_INV_BUILTIN USE_NUM_NONE USE_SCALAR_INV_BUILTIN)
@@ -145,6 +150,7 @@ if (BUILD_SECP256K1_STATIC)
 else ()
 	add_library(secp256k1_core SHARED ${main_c_sources})
 endif ()
+set_target_properties(secp256k1_core PROPERTIES PUBLIC_HEADER "${HEADERS}")
 
 target_compile_definitions(secp256k1_core PRIVATE ${COMMON_COMPILE_FLAGS} ${COMPILE_FLAGS})
 target_include_directories(secp256k1_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -170,10 +176,23 @@ if (NOT DISABLE_JNI)
 		endif ()
 	endif ()
 
+	install(
+		TARGETS secp256k1_jni
+		RUNTIME DESTINATION bin
+		LIBRARY DESTINATION lib
+		ARCHIVE DESTINATION lib
+	)
+
 endif ()
 
 if (ENABLE_GENERATE_CONTEXT)
 	add_dependencies(secp256k1_core ecmult_static_context)
 endif ()
 
-# TODO - generate jni sources with build-time namespaces
+install(
+	TARGETS secp256k1_core
+	RUNTIME DESTINATION bin
+	LIBRARY DESTINATION lib
+	ARCHIVE DESTINATION lib
+	PUBLIC_HEADER DESTINATION include
+)
