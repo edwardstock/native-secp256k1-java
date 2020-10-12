@@ -35,6 +35,9 @@ jobs:
       - image: conanio/gcc5
         environment:
           CONAN_CPU_COUNT: 4
+    auth:
+      username: $DOCKER_USER
+      password: $DOCKER_TOKEN
     steps:
       - do_all
   gcc-6:
@@ -42,6 +45,9 @@ jobs:
       - image: conanio/gcc6
         environment:
           CONAN_CPU_COUNT: 4
+    auth:
+      username: $DOCKER_USER
+      password: $DOCKER_TOKEN
     steps:
       - do_all
   gcc-7:
@@ -49,6 +55,9 @@ jobs:
       - image: conanio/gcc7
         environment:
           CONAN_CPU_COUNT: 4
+    auth:
+      username: $DOCKER_USER
+      password: $DOCKER_TOKEN
     steps:
       - do_all
   gcc-8:
@@ -56,6 +65,9 @@ jobs:
       - image: conanio/gcc8
         environment:
           CONAN_CPU_COUNT: 4
+    auth:
+      username: $DOCKER_USER
+      password: $DOCKER_TOKEN
     steps:
       - do_all
   gcc-9:
@@ -63,6 +75,9 @@ jobs:
       - image: conanio/gcc9
         environment:
           CONAN_CPU_COUNT: 4
+    auth:
+      username: $DOCKER_USER
+      password: $DOCKER_TOKEN
     steps:
       - do_all
   gcc-10:
@@ -70,12 +85,17 @@ jobs:
       - image: conanio/gcc10
         environment:
           CONAN_CPU_COUNT: 4
+    auth:
+      username: $DOCKER_USER
+      password: $DOCKER_TOKEN
     steps:
       - do_all
 
 workflows:
   version: 2.1
   build_and_test:
+    context:
+      - remote_tokens
     jobs:
       - gcc-4_8_5
       - gcc-5
