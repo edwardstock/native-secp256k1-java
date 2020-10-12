@@ -58,6 +58,8 @@ for ((i = 0; i < res_cnt; i++)); do
   done
 done
 
+set -x
+
 # iterate over each options cartesian product
 for opt_idx in ${!TARGET_OPTS[*]}; do
   echo "Build with opt:${TARGET_OPTS[$opt_idx]}"
@@ -65,7 +67,7 @@ for opt_idx in ${!TARGET_OPTS[*]}; do
   # iterate over available c++ stdlib
   for stdlib_idx in ${!std_lib_names[*]}; do
     CONAN_LOCAL=1 conan create . ${CONAN_REPO}/${CONAN_REPO_TAG} -s compiler.libcxx="${std_lib_names[$stdlib_idx]}" -s build_type=Debug --build=missing ${TARGET_OPTS[$opt_idx]}
-    CONAN_LOCAL=1 conan create . ${CONAN_REPO}${CONAN_REPO_TAG} -s compiler.libcxx="${std_lib_names[$stdlib_idx]}" -s build_type=Release --build=missing ${TARGET_OPTS[$opt_idx]}
+    CONAN_LOCAL=1 conan create . ${CONAN_REPO}/${CONAN_REPO_TAG} -s compiler.libcxx="${std_lib_names[$stdlib_idx]}" -s build_type=Release --build=missing ${TARGET_OPTS[$opt_idx]}
   done
 done
 
