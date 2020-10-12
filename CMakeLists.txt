@@ -6,12 +6,24 @@
 #
 
 cmake_minimum_required(VERSION 3.4)
-project(secp256k1 LANGUAGES CXX)
+project(secp256k1_java
+        VERSION 1.0.0
+        DESCRIPTION "Optimized C library for EC operations on curve secp256k1 with JNI-Bindings"
+        LANGUAGES CXX
+        )
 set(CMAKE_CXX_STANDARD 14)
+
+if (WIN32)
+	execute_process(COMMAND cmd /C "echo ${CMAKE_PROJECT_VERSION} > ${CMAKE_CURRENT_SOURCE_DIR}/version")
+else ()
+	execute_process(COMMAND bash -c "echo ${CMAKE_PROJECT_VERSION} > ${CMAKE_CURRENT_SOURCE_DIR}/version")
+endif ()
 
 include(CheckTypeSize)
 include_directories(src)
 include_directories(libs)
+
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 
 set(BUILD_SECP256K1_STATIC ON CACHE BOOL "Build static library")
 
@@ -19,6 +31,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY lib)
 set(CMAKE_PDB_OUTPUT_DIRECTORY lib)
+
+set(LIB_NAME_MAIN secp256k1_core)
+set(LIB_NAME_JNI secp256k1_jni)
 
 check_type_size("unsigned __int128" HAVE_BIGNUM LANGUAGE CXX)
 
@@ -99,34 +114,20 @@ set(all_sources
     src/ecmult_static_context.h
     )
 
-set(bignum_cxx libs/uint128_t/uint128_t.h libs/uint128_t/uint128_t.cpp)
+set(bignum_cxx
+    libs/uint128_t/uint128_t.h
+    libs/uint128_t/uint128_t.cpp
+    )
+
 set(main_c_sources ${all_sources})
-set(secp256k1_jni_sources src/java/NativeSecp256k1.cpp src/java/NativeSecp256k1.cpp)
 
-# Context generator
-set(GENERATOR_BIN_PATH ${CMAKE_BINARY_DIR}/src)
-set(GENERATED_PATH ${CMAKE_ROOT_SOURCE_DIR}/src)
-set(GENERATED_CONTEXT_PATH "src/ecmult_static_context.h")
-message(STATUS "Context generator bin path: ${GENERATOR_BIN_PATH}")
-
-if (ENABLE_GENERATE_CONTEXT)
-	add_executable(gen_context
-	               src/gen_context.cpp
-	               src/ecmult.h
-	               src/ecmult_gen.h
-	               src/ecmult_gen_impl.h
-	               src/ecmult_const.h
-	               src/ecmult_const_impl.h
-	               )
-	target_include_directories(gen_context PRIVATE ${CMAKE_SOURCE_DIR})
-	message(STATUS "Generate static context in ${GENERATED_CONTEXT_PATH}")
-
-	add_custom_target(ecmult_static_context gen_context WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-	set(main_c_sources
-	    ${main_c_sources}
-	    ${GENERATED_CONTEXT_PATH}
-	    )
-endif ()
+set(secp256k1_jni_headers
+    src/java/NativeSecp256k1.h
+    )
+set(secp256k1_jni_sources
+    ${secp256k1_jni_headers}
+    src/java/NativeSecp256k1.cpp
+    )
 
 # Main lib
 if (NOT HAVE_BIGNUM)
@@ -140,59 +141,51 @@ set(SECP256K1_EXPORING 1)
 if(NOT BUILD_SECP256K1_STATIC)
 	set(SECP256K1_SHARED 1)
 endif()
+
 configure_file(
 	${CMAKE_CURRENT_SOURCE_DIR}/cfg/secp256k1_config.h.in
 	${CMAKE_CURRENT_SOURCE_DIR}/include/secp256k1_config.h
 )
 
-if (BUILD_SECP256K1_STATIC)
-	add_library(secp256k1_core STATIC ${main_c_sources})
-else ()
-	add_library(secp256k1_core SHARED ${main_c_sources})
-endif ()
-set_target_properties(secp256k1_core PROPERTIES PUBLIC_HEADER "${HEADERS}")
+set(INSTALL_TARGETS ${LIB_NAME_MAIN})
 
-target_compile_definitions(secp256k1_core PRIVATE ${COMMON_COMPILE_FLAGS} ${COMPILE_FLAGS})
-target_include_directories(secp256k1_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_compile_options(secp256k1_core PRIVATE ${COMPILE_OPTIONS})
+if (BUILD_SECP256K1_STATIC)
+	add_library(${LIB_NAME_MAIN} STATIC ${main_c_sources})
+else ()
+	add_library(${LIB_NAME_MAIN} SHARED ${main_c_sources})
+endif ()
+set_target_properties(${LIB_NAME_MAIN} PROPERTIES PUBLIC_HEADER "${HEADERS}")
+
+target_compile_definitions(${LIB_NAME_MAIN} PRIVATE ${COMMON_COMPILE_FLAGS} ${COMPILE_FLAGS})
+
+target_include_directories(${LIB_NAME_MAIN} PUBLIC
+                           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                           $<INSTALL_INTERFACE:include>)
+
+target_compile_options(${LIB_NAME_MAIN} PRIVATE ${COMPILE_OPTIONS})
 
 if (NOT DISABLE_JNI)
 
 	if (ANDROID_PLATFORM)
 		# JNI
-		add_library(secp256k1_jni SHARED ${secp256k1_jni_sources})
-		target_link_libraries(secp256k1_jni secp256k1_core)
-		target_include_directories(secp256k1_jni PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
+		add_library(${LIB_NAME_JNI} SHARED ${secp256k1_jni_sources})
+		target_link_libraries(${LIB_NAME_JNI} ${LIB_NAME_MAIN})
+		target_include_directories(${LIB_NAME_JNI} PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
 	else ()
 		find_package(JNI)
 		if (JNI_FOUND)
 			message(STATUS "JNI libs: ${JNI_LIBRARIES}")
-			add_library(secp256k1_jni SHARED ${secp256k1_jni_sources})
-			target_link_libraries(secp256k1_jni secp256k1_core)
-			target_link_libraries(secp256k1_jni ${JAVA_JVM_LIBRARY})
-			target_include_directories(secp256k1_jni PRIVATE ${JNI_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
+			add_library(${LIB_NAME_JNI} SHARED ${secp256k1_jni_sources})
+			list(APPEND INSTALL_TARGETS ${LIB_NAME_JNI})
+			#			set_target_properties(${LIB_NAME_JNI} PROPERTIES PUBLIC_HEADER "${secp256k1_jni_headers}")
+
+			target_link_libraries(${LIB_NAME_JNI} ${LIB_NAME_MAIN})
+			target_link_libraries(${LIB_NAME_JNI} ${JAVA_JVM_LIBRARY})
+			target_include_directories(${LIB_NAME_JNI} PRIVATE ${JNI_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
 		else ()
 			message(WARN "JNI not found")
 		endif ()
 	endif ()
-
-	install(
-		TARGETS secp256k1_jni
-		RUNTIME DESTINATION bin
-		LIBRARY DESTINATION lib
-		ARCHIVE DESTINATION lib
-	)
-
 endif ()
 
-if (ENABLE_GENERATE_CONTEXT)
-	add_dependencies(secp256k1_core ecmult_static_context)
-endif ()
-
-install(
-	TARGETS secp256k1_core
-	RUNTIME DESTINATION bin
-	LIBRARY DESTINATION lib
-	ARCHIVE DESTINATION lib
-	PUBLIC_HEADER DESTINATION include
-)
+include(package)

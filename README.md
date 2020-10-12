@@ -1,5 +1,24 @@
-Native libsecp256k1 for java
-============
+C implementation of secp256k1 with Java bindings.
+=================================================
+
+| Bintray | Windows | Linux & macOS |
+|:--------:|:---------:|:-----------------:|
+[ ![Download](https://api.bintray.com/packages/edwardstock/conan-public/secp256k1_java:edwardstock/images/download.svg?_latestVersion)](https://bintray.com/edwardstock/conan-public/secp256k1_java:edwardstock/_latestVersion)|untested|[![CircleCI](https://circleci.com/gh/edwardstock/native-secp256k1-java/tree/master.svg?style=svg)](https://circleci.com/gh/edwardstock/native-secp256k1-java/tree/master)|
+
+Target with name `libsecp256k1_jni` contains 2 java classes with native implementations:
+- NativeSecp256k1
+- NativeSecp256k1Util
+
+## Usage
+
+1. Build library
+2. Put `libsecp256k1_jni.so` and `libsecp256k1_core.[a|so|dylib]` to libdir (depends what system you using)
+3. Add java classes from source to your Java project `classpath` (or just copy to your project, but preserve namespace, it cannot be changed without re-compiling)
+
+
+Original description below.
+----------------------
+
 
 Optimized C library for EC operations on curve secp256k1.
 
@@ -71,8 +90,8 @@ JAVA_HOME=/path/to/java_sdk cmake .. -DCMAKE_BUILD_TYPE=Debug
 Result files
 ------------------
 With JNI:
- - libsecp256k1_core[ .a | .lib ]
- - libsecp256k1_jni[ .dylib | so | dll ] (always shared library)
+ - libsecp256k1_core\[ .a | .lib \]
+ - libsecp256k1_jni\[ .dylib | so | dll \] (always shared library)
  
 Without JNI:
- - libsecp256k1_core[ .a | .lib ]
+ - libsecp256k1_core\[ .a | .lib \]
