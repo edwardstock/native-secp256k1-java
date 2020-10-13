@@ -1,10 +1,6 @@
 checkout: git clone --recursive https://github.com/edwardstock/native-secp256k1-java.git .
 debug: true
 commands:
-  conan:
-    steps:
-      - bash .circleci/deploy.sh
-
   init_centos:
     steps:
       - run: yum -y update
@@ -24,11 +20,10 @@ commands:
   build_and_package:
     steps:
       - run: bash cfg/package_make.sh -t package
-      - run: bash _build/package_upload.sh -t bintray --dry-run
+      - run: bash _build/package_upload.sh -t bintray
 
   make_project:
     steps:
-      - conan
       - build_and_package
 
 jobs:
